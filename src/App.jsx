@@ -5,16 +5,34 @@ import Form from 'react-bootstrap/Form';
 import {Card,Row,Col, Container} from 'react-bootstrap'
 import { useState } from 'react';
 function App() {
- const [students,setStudents]=useState([]);
- const [name,setName]=useState('');
- const [age,setAge]=useState('');
-
- const handleSubmit=(event)=>{
-   event.preventDefault();
-   setStudents([...students,{name,age}])
-  // console.log(students)
-   setName('')
-   setAge('')
+  const [reminders,setReminders]=useState([]);
+  const [reminder,setReminder]=useState('');
+  const [editIndex,setEditIndex]=useState(null);
+  const handleSubmit=(event)=>{
+    event.preventDefault();
+  
+  
+    if(editIndex !== null){
+      const newRemind=[...reminders];
+      newRemind[editIndex]={ reminder}
+     setReminders(newRemind)
+     setEditIndex(null)
+     
+    }else{
+      setReminders([...reminders,{reminder}])
+    }
+    setReminder('')
+   }
+  
+   const handleDelete=(index)=>{
+    const newRemind=[...reminders];
+    newRemind.splice(index,1);
+    setReminders(newRemind);
+   }
+  
+   const handleEdit=(index)=>{
+    setReminder(reminders[index].reminder);
+    setEditIndex(index);
  }
 
   return (
@@ -27,28 +45,28 @@ function App() {
      <Form onSubmit={handleSubmit}> 
       <Form.Group className="mb-3">
           <Form.Label>Nombre</Form.Label>
-          <Form.Control type="text" placeholder="Ingrese Nombre" value={name} onChange={(e)=>setName(e.target.value)}  />
-      </Form.Group>
-      <Form.Group className="mb-3">
-          <Form.Label>Edad</Form.Label>
-          <Form.Control type="number" placeholder="Ingrese Edad" value={age} onChange={(e)=>setAge(e.target.value)}/>
+          <Form.Control type="text" placeholder="Ingrese recordatorio" value={reminder} onChange={(e)=>setReminder(e.target.value)}  />
       </Form.Group>
         
-        <Button type="submit">Agregar Estudiante</Button>
+        <Button type="submit">Agregar recordatorio</Button>
 
       </Form>
     </Col>
   </Row>
    <Row>
     {
-      students.map((student,index)=>(
+      reminders.map((remind,index)=>(
       <Col sm={6} key={index}>
             <Card style={{ width:'18rem',marginTop:'20px'}}>
           
                 <Card.Body>
-                  <Card.Title>Datos Estudiante</Card.Title>
-                  <Card.Text>Nombre:{student.name}</Card.Text>
-                  <Card.Text>Edad:{student.age}</Card.Text>
+                  <Card.Title>Datos de recordatorio</Card.Title>
+                  <Card.Text>Nombre:{remind.reminder}</Card.Text>
+                  <Button variant="eliminar" onClick={() => handleDelete(index)}>
+                    Eliminar
+                  </Button>
+                <Button variant="editar recordatorio" onClick={() => handleEdit(index)} style={{ marginLeft: '10px' }}>Editar</Button>
+                
                 </Card.Body>
             </Card>
       </Col>
